@@ -1,4 +1,4 @@
-var someVariable = {
-    someVariable: 20,
-    anotherVariable: "some string",
+var someVariable2 = {
+  someVariable: 20,
+  anotherVariable: "some string",
 };
