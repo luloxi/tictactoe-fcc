@@ -1,7 +1,8 @@
 import View from "./view.js";
 import Store from "./store.js";
+import type { Player } from "./types";
 
-const players = [
+const players: Player[] = [
   {
     id: 1,
     name: "Player 1",
@@ -18,7 +19,7 @@ const players = [
 
 function init() {
   const view = new View();
-  const store = new Store("live-t3-storage-key", players);
+  const store = new Store("game-state-key", players);
 
   // The first load of the document
   view.render(store.game, store.stats);

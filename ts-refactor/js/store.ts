@@ -1,4 +1,27 @@
-const initialValue = {
+/**
+ * Types declaration
+ */
+import type { GameState, GameStatus, Player, Move } from "./types";
+// Added directly to the #SaveState function for the sake of simplicity
+// type SaveStateCallBack = (prevState: GameState) => GameState;
+
+type PlayerWithWins = Player & { wins: number };
+
+export type DerivedStats = {
+  ties: number;
+  playerWithStats: PlayerWithWins[];
+};
+
+export type DerivedGame = {
+  moves: Move[];
+  currentPlayer: Player;
+  status: GameStatus;
+};
+
+/**
+ * Game state
+ */
+const initialState: GameState = {
   currentGameMoves: [],
   history: {
     currentRoundGames: [],
@@ -8,14 +31,15 @@ const initialValue = {
 
 // Extending EventTarget allows objects to receive events and have event listeners attached to them
 export default class Store extends EventTarget {
-  constructor(key, players) {
+  constructor(
+    private readonly storageKey: string,
+    private readonly players: Player[]
+  ) {
     // super() is the keyword that allows us to inherit from EventTarget
     super();
-    this.storageKey = key;
-    this.players = players;
   }
 
-  get stats() {
+  get stats(): DerivedStats {
     const state = this.#getState();
 
     return {
@@ -37,7 +61,7 @@ export default class Store extends EventTarget {
   }
 
   // Adding the "get" getter allows calling the function without the parentheses on app.js
-  get game() {
+  get game(): DerivedGame {
     const state = this.#getState();
 
     const currentPlayer = this.players[state.currentGameMoves.length % 2];
@@ -77,7 +101,7 @@ export default class Store extends EventTarget {
     };
   }
 
-  playerMove(squareId) {
+  playerMove(squareId: number) {
     // structuredClone gets a clone of the state object without altering the original
     const stateClone = structuredClone(this.#getState());
 
@@ -97,7 +121,10 @@ export default class Store extends EventTarget {
     if (status.isComplete) {
       stateClone.history.currentRoundGames.push({
         moves,
-        status,
+        status: {
+          isComplete: status.isComplete,
+          winner: status.winner,
+        },
       });
     }
 
@@ -109,19 +136,16 @@ export default class Store extends EventTarget {
   newRound() {
     this.reset();
 
-    const stateClone = structuredClone(this.#getState());
+    const stateClone = structuredClone(this.#getState()) as GameState;
     stateClone.history.allGames.push(...stateClone.history.currentRoundGames);
     stateClone.history.currentRoundGames = [];
 
     this.#saveState(stateClone);
   }
 
-  #getState() {
-    const item = window.localStorage.getItem(this.storageKey);
-    return item ? JSON.parse(item) : initialValue;
-  }
-
-  #saveState(stateOrFunction) {
+  #saveState(
+    stateOrFunction: GameState | ((prevState: GameState) => GameState)
+  ) {
     const prevState = this.#getState();
 
     let newState;
@@ -142,5 +166,12 @@ export default class Store extends EventTarget {
     window.localStorage.setItem(this.storageKey, JSON.stringify(newState));
     // Emitting event that'll trigger the statechange event listener on app.js
     this.dispatchEvent(new Event("statechange"));
+  }
+
+  // You can define the return type of a function by adding a colon after the function's parameters
+  // #getState(): GameState {
+  #getState() {
+    const item = window.localStorage.getItem(this.storageKey);
+    return item ? (JSON.parse(item) as GameState) : initialState;
   }
 }
