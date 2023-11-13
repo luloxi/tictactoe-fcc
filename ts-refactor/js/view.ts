@@ -17,27 +17,26 @@ export default class View {
   $$: Record<string, NodeListOf<Element>> = {};
 
   constructor() {
-    document.addEventListener("DOMContentLoaded", () => {
-      this.$.menu = this.#qs("[data-id='menu']");
-      this.$.menuBtn = this.#qs('[data-id="menu-btn"]');
-      this.$.menuItems = this.#qs("[data-id='menu-items']");
-      this.$.resetBtn = this.#qs("[data-id='reset-btn']");
-      this.$.newRoundBtn = this.#qs("[data-id='new-round-btn']");
-      this.$.modal = this.#qs("[data-id='modal']");
-      this.$.modalText = this.#qs("[data-id='modal-text']");
-      this.$.modalBtn = this.#qs("[data-id='modal-btn']");
-      this.$.turn = this.#qs("[data-id='turn']");
-      this.$.p1Wins = this.#qs("[data-id='p1-wins']");
-      this.$.p2Wins = this.#qs("[data-id='p2-wins']");
-      this.$.ties = this.#qs("[data-id='ties']");
-      this.$.grid = this.#qs("[data-id='grid']");
+    document.addEventListener("DOMContentLoaded", () => {});
+    this.$.menu = this.#qs("[data-id='menu']");
+    this.$.menuBtn = this.#qs('[data-id="menu-btn"]');
+    this.$.menuItems = this.#qs("[data-id='menu-items']");
+    this.$.resetBtn = this.#qs("[data-id='reset-btn']");
+    this.$.newRoundBtn = this.#qs("[data-id='new-round-btn']");
+    this.$.modal = this.#qs("[data-id='modal']");
+    this.$.modalText = this.#qs("[data-id='modal-text']");
+    this.$.modalBtn = this.#qs("[data-id='modal-btn']");
+    this.$.turn = this.#qs("[data-id='turn']");
+    this.$.p1Wins = this.#qs("[data-id='p1-wins']");
+    this.$.p2Wins = this.#qs("[data-id='p2-wins']");
+    this.$.ties = this.#qs("[data-id='ties']");
+    this.$.grid = this.#qs("[data-id='grid']");
 
-      this.$$.squares = this.#qsAll("[data-id='square']");
+    this.$$.squares = this.#qsAll("[data-id='square']");
 
-      // UI-only event listeners
-      this.$.menuBtn.addEventListener("click", (event) => {
-        this.#toggleMenu();
-      });
+    // UI-only event listeners
+    this.$.menuBtn.addEventListener("click", (event) => {
+      this.#toggleMenu();
     });
   }
 
@@ -125,22 +124,18 @@ export default class View {
 
   #closeModal() {
     // Check if this.$.modal is not undefined
-    if (this.$.modal) {
-      this.$.modal.classList.add("hidden");
-    }
+    this.$.modal.classList.add("hidden");
   }
 
   #closeMenu() {
-    if (this.$.menuItems && this.$.menuBtn) {
-      this.$.menuItems.classList.add("hidden");
-      this.$.menuBtn.classList.remove("border");
+    this.$.menuItems.classList.add("hidden");
+    this.$.menuBtn.classList.remove("border");
 
-      // const icon = this.$.menuBtn.querySelector("i");
-      const icon = this.#qs("i", this.$.menuBtn);
+    // const icon = this.$.menuBtn.querySelector("i");
+    const icon = this.#qs("i", this.$.menuBtn);
 
-      icon.classList.add("fa-chevron-down");
-      icon.classList.remove("fa-chevron-up");
-    }
+    icon.classList.add("fa-chevron-down");
+    icon.classList.remove("fa-chevron-up");
   }
 
   #toggleMenu() {
@@ -169,7 +164,9 @@ export default class View {
     label.classList.add(player.colorClass);
     label.innerText = `${player.name}, you're up!`;
 
-    this.$.turn.replaceChildren(icon, label);
+    if (this.$.turn) {
+      this.$.turn.replaceChildren(icon, label);
+    }
   }
 
   // # makes the method private
