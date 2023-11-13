@@ -1,11 +1,16 @@
 import "./Modal.css";
 
-export default function Modal() {
+type Props = {
+  message: string;
+  onClick(): void;
+};
+
+export default function Modal({ message, onClick }: Props) {
   return (
-    <div className="modal hidden" data-id="modal">
+    <div className="modal">
       <div className="modal-contents">
-        <p data-id="modal-text">Player 1 wins!</p>
-        <button data-id="modal-btn">Play again</button>
+        <p>{message}</p>
+        <button onClick={onClick}>Play again</button>
       </div>
     </div>
   );
